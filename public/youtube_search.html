@@ -1,0 +1,59 @@
+<html>
+  <body>
+  <h1>YouTube Searcher</h1>
+  <p>Search for a YouTube video below. The first result
+  is what will be returned for embedding into the learning platform.
+  </p>
+  <form id="form">
+    <input type="text" name="query" id="query"/>
+    <button type="submit">I'm Feeling Lucky</button>
+  </form>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+  <script>
+    
+    // Remember the return_url so we know where to send the user once selection is complete
+    var returnUrl = decodeURIComponent(location.href.match(/return_url=([^&#]+)/)[1]);
+    if(!returnUrl) {
+      returnUrl = "http://www.example.com";
+      alert("No valid return URL provided! This tool will not work correctly!");
+    }
+    
+    function returnVideo(video_id) {
+      // NOTE: for the advanced user, you may want to use /embed instead of /watch?v=
+      // in some cases. Specifically, if you know the link is going to be
+      // used in an iframe (this will happen when returning links to be added
+      // to modules in Canvas) or if you decide to use embed_type=iframe instead
+      // of embed_type=url.
+      // It's also a good idea to use https whenever possible, since some
+      // platforms (Canvas included) run everything over SSL.
+      var url = "https://www.youtube.com/watch?v="  + video_id;
+      returnUrl = returnUrl + (returnUrl.match(/\?/) ? "&" : "?") + "embed_type=url&title=Video&text=Video&url=" + encodeURIComponent(url);
+      location.href = returnUrl;
+    }
+    
+    // JSONP call to search for YouTube videos
+    function findVideo(query) {
+      // YouTube API endpoint.
+      var url = "https://gdata.youtube.com/feeds/api/videos?v=2&q=" + query + "&orderby=relevance&alt=json-in-script";
+      $.ajax({
+        url: url,
+        success: function(data) {
+          // Grad the *first* video and use that one.
+          // If you wanted to list the videos instead this would be the place to
+          // iterate through the results. The attribute names are... different, 
+          // but you can find thumbnails, descriptions, durations, etc.
+          var video_id = data.feed.entry[0].id['$t'].match(/\w+$/)[0];
+          returnVideo(video_id);
+        },
+        dataType: 'jsonp'
+      });
+    }
+    
+    // When the user submits the search form, trigger the JSONP lookup
+    $("#form").submit(function(event) {
+      event.preventDefault();
+      findVideo($("#query").val());
+    });
+  </script>
+  </body>
+</html>
