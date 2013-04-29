@@ -3,7 +3,7 @@ YouTube Search LTI App
 This is a really basic app that will let teachers search for
 and set links to YouTube videos within their course content.
 
-More information available here:  http://brianwhitmer.blogspot.com/2012/12/building-youtube-lti-app.html
+More information available here:  http://brianwhitmer.blogspot.com/2013/04/a-better-youtube-app-using-lti.html
 
 ### Setting Up
 
